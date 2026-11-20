@@ -27,12 +27,17 @@ function clearContents(dir: string): void {
   }
 }
 
+// Order directory entries by name, ascending.
+function compareEntryNames(a: { name: string }, b: { name: string }): number {
+  return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+}
+
 // Copy a tree in sorted order so the result never depends on the order the
 // filesystem happens to enumerate directory entries.
 function copyTreeSorted(from: string, to: string): void {
   mkdirSync(to, { recursive: true });
   const entries = readdirSync(from, { withFileTypes: true })
-    .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+    .sort(compareEntryNames);
   for (const entry of entries) {
     const src = join(from, entry.name);
     const dst = join(to, entry.name);
