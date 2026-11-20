@@ -1,12 +1,277 @@
-html, body { margin: 0; height: 100%; background: #f2f0f4; color: #1d1b22; font: 15px/1.4 system-ui, sans-serif; }
-.app { display: flex; gap: 32px; align-items: center; justify-content: center; height: 100%; padding: 24px; box-sizing: border-box; }
-.controls { display: flex; flex-direction: column; gap: 14px; width: 280px; }
-.controls h1 { margin: 0; font-size: 28px; }
-.controls p { margin: 0; color: #5c5866; }
-label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
-input[type=text] { font: inherit; padding: 8px; border: 1px solid #c9c4d1; border-radius: 6px; }
-button { font: inherit; font-weight: 700; padding: 10px; border: 0; border-radius: 6px; background: #1d1b22; color: #fff; cursor: pointer; }
-canvas { width: min(70vh, 60vw); height: min(70vh, 60vw); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); }
-body.shot-cover .controls { display: none; }
-body.shot-cover .app { padding: 0; }
-body.shot-cover canvas { width: 100vw; height: 100vh; box-shadow: none; }
+/* Leonida Grid — page styling. A dusk-violet studio around a cream postcard. */
+
+@font-face {
+  font-family: 'Anton';
+  src: url('./fonts/Anton-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pacifico';
+  src: url('./fonts/Pacifico-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(160deg, #1b1030 0%, #2e1a47 55%, #57255c 100%);
+  color: #f4ecdc;
+  min-height: 100vh;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 20px 0;
+}
+
+.brand-mark {
+  font-family: 'Anton', 'Arial Narrow', sans-serif;
+  font-size: 21px;
+  letter-spacing: 1px;
+  color: #ffd94d;
+  border: 2px solid #ffd94d;
+  border-radius: 8px;
+  padding: 3px 8px;
+  transform: rotate(-3deg);
+}
+
+.brand-text {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.brand-text h1 {
+  font-family: 'Anton', 'Arial Narrow', sans-serif;
+  font-size: 24px;
+  letter-spacing: 2px;
+  margin: 0;
+  color: #fdf6e0;
+  white-space: nowrap;
+}
+
+.brand-text p {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(244, 236, 220, 0.75);
+}
+
+.workspace {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 8px 20px 14px;
+}
+
+.stage-wrap {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: rgba(10, 6, 20, 0.45);
+  border: 1px solid rgba(255, 217, 77, 0.25);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.stage-wrap.dragover {
+  outline: 3px dashed #19d3e6;
+  outline-offset: -6px;
+}
+
+#stage {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: calc(100vh - 190px);
+  object-fit: contain;
+  margin: 0 auto;
+  border-radius: 4px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+  cursor: grab;
+  touch-action: none;
+}
+
+.drop-hint {
+  text-align: center;
+  font-size: 12.5px;
+  color: rgba(244, 236, 220, 0.65);
+  margin: 10px 0 2px;
+}
+
+.controls {
+  flex: 0 0 302px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: calc(100vh - 70px);
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.control-group {
+  background: rgba(16, 10, 30, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  padding: 6px 10px 7px;
+}
+
+.control-group h2 {
+  font-family: 'Anton', 'Arial Narrow', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2.5px;
+  color: #ffd94d;
+  margin: 0 0 5px;
+}
+
+.picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.picker button,
+.button-row button,
+button.wide {
+  font: inherit;
+  font-size: 11.5px;
+  color: #f4ecdc;
+  background: #34235a;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  padding: 3px 7px;
+  cursor: pointer;
+}
+
+.picker button:hover,
+.button-row button:hover,
+button.wide:hover {
+  background: #453073;
+}
+
+.picker button.active {
+  background: #ffd94d;
+  color: #241631;
+  border-color: #ffd94d;
+  font-weight: 600;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.button-row.exports button {
+  flex: 1 1 30%;
+  background: #7a2d5c;
+}
+
+.button-row.exports button:hover {
+  background: #93386f;
+}
+
+button.wide {
+  width: 100%;
+  margin: 5px 0;
+}
+
+.file-button {
+  display: block;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #241631;
+  background: linear-gradient(90deg, #ffb35c, #ff5da2);
+  border-radius: 8px;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+
+.privacy {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: #9be8c0;
+  margin: 6px 0 0;
+}
+
+.panel-label {
+  font-size: 11.5px;
+  color: rgba(244, 236, 220, 0.8);
+  margin: 6px 0 2px;
+}
+
+.hint {
+  font-size: 11px;
+  color: rgba(244, 236, 220, 0.55);
+  margin: 3px 0 0;
+}
+
+.slider-label,
+.text-label {
+  display: block;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.slider-label input,
+.text-label input {
+  width: 100%;
+  margin-top: 3px;
+}
+
+.text-label input {
+  font: inherit;
+  font-size: 13px;
+  color: #1d1430;
+  background: #fdf6e0;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  padding: 4px 6px;
+}
+
+.check-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+/* Shot modes: the cover fills the whole window, nothing else is painted. */
+body.shot {
+  background: #000;
+  min-height: 0;
+}
+
+body.shot .brand,
+body.shot .controls,
+body.shot .drop-hint {
+  display: none;
+}
+
+body.shot .workspace {
+  padding: 0;
+  gap: 0;
+}
+
+body.shot .stage-wrap {
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+body.shot #stage {
+  width: 100vw;
+  height: 100vh;
+  max-height: none;
+  border-radius: 0;
+  box-shadow: none;
+}
